@@ -42,7 +42,7 @@ func (p *_postgres) Migrate() error {
 		return fmt.Errorf("fail to create driver from db instance: %w", err)
 	}
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://store/migrations/postgres",
+		"file://store/migration/postgres",
 		"postgres",
 		driver,
 	)

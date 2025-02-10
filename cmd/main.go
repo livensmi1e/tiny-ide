@@ -22,7 +22,9 @@ func main() {
 	}
 	store := store.New(driver)
 	if err := store.Migrate(); err != nil {
-		fmt.Println(err.Error())
+		logger.Error(err.Error())
+	} else {
+		logger.Info("migrate completed")
 	}
 	validator := validator.New()
 	queue := queue.New(cfg, "submissions")

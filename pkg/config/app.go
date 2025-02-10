@@ -17,10 +17,10 @@ func New() *Config {
 		Version: "v1",
 		Store: StoreConfig{
 			Driver: "postgres",
-			DSN:    "postgres://user:password@localost:5432/postgres",
+			DSN:    "postgres://postgres:password@localhost:5432/postgres?sslmode=disable",
 		},
 		Queue: QueueConfig{
-			Addr:     "localhost",
+			Addr:     "localhost:6379",
 			Password: "",
 		},
 	}
