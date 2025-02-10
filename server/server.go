@@ -24,6 +24,10 @@ func NewServer(infra infra.Infrastructure) *Server {
 	return server
 }
 
+func (s *Server) Start() error {
+	return s.router.Start(s.infra.Config().Addr + ":" + s.infra.Config().Port)
+}
+
 func (s *Server) setupMiddlewares() {
 	s.router.Use(middleware.CORS())
 

@@ -12,7 +12,7 @@ type Infrastructure interface {
 	Config() *config.Config
 	Logger() *logger.Logger
 	Validator() validator.Validator
-	Queue() *queue.SubmissionQueue
+	Queue() queue.Queue
 	Store() *store.Store
 }
 
@@ -20,17 +20,17 @@ type AppInfra struct {
 	config    *config.Config
 	logger    *logger.Logger
 	validator validator.Validator
-	queue     *queue.SubmissionQueue
+	queue     queue.Queue
 	store     *store.Store
 }
 
-func NewInfrastructure(cfg *config.Config, lg *logger.Logger, st *store.Store, vldt validator.Validator, que *queue.SubmissionQueue) Infrastructure {
+func NewInfrastructure(cfg *config.Config, lg *logger.Logger, st *store.Store, vldt validator.Validator, q queue.Queue) Infrastructure {
 	return &AppInfra{
 		config:    cfg,
 		logger:    lg,
 		store:     st,
 		validator: vldt,
-		queue:     que,
+		queue:     q,
 	}
 }
 
@@ -50,6 +50,6 @@ func (i *AppInfra) Validator() validator.Validator {
 	return i.validator
 }
 
-func (i *AppInfra) Queue() *queue.SubmissionQueue {
+func (i *AppInfra) Queue() queue.Queue {
 	return i.queue
 }

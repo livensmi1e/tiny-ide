@@ -3,7 +3,7 @@ package config
 type Config struct {
 	Mode    string
 	Addr    string
-	Port    int
+	Port    string
 	Version string
 	Store   StoreConfig
 	Queue   QueueConfig
@@ -12,12 +12,12 @@ type Config struct {
 func New() *Config {
 	return &Config{
 		Addr:    "localhost",
-		Port:    8000,
+		Port:    "8000",
 		Mode:    "development",
 		Version: "v1",
 		Store: StoreConfig{
 			Driver: "postgres",
-			DSN:    "postgres://user:password@localost:5432",
+			DSN:    "postgres://user:password@localost:5432/postgres",
 		},
 		Queue: QueueConfig{
 			Addr:     "localhost",

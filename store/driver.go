@@ -1,3 +1,9 @@
 package store
 
-type Driver interface{}
+import "database/sql"
+
+type Driver interface {
+	Close() error
+	GetDB() *sql.DB
+	Migrate() error
+}

@@ -1,3 +1,6 @@
 package queue
 
-type SubmissionQueue struct{}
+type Queue interface {
+	Push(submission *Submission) error
+	Pop() (*Submission, error)
+}
