@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS submission (
     status VARCHAR(10) DEFAULT 'pending',
     stdout TEXT DEFAULT '', 
     stderr TEXT DEFAULT '',
-    time DECIMAL(10, 5) DEFAULT 0,
-    memory DECIMAL(10, 2) DEFAULT 0
+    time VARCHAR(10) DEFAULT '0',
+    memory VARCHAR(10) DEFAULT '0'
 );

@@ -1,10 +1,14 @@
-package queue
+package domain
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/livensmi1e/tiny-ide/pkg/constant"
+)
 
 type Submission struct {
 	ID         string `json:"id"`
-	LanguageID string `json:"language_id"`
+	LanguageID int32  `json:"language_id"`
 	SourceCode string `json:"source_code"`
 }
 
@@ -14,6 +18,15 @@ func (s *Submission) Serialize() (string, error) {
 		return "", err
 	}
 	return string(data), nil
+}
+
+func (s *Submission) MapLang() string {
+	langMap := map[int32]string{
+		1: constant.PYTHON,
+		2: constant.C,
+		3: constant.CPP,
+	}
+	return langMap[s.LanguageID]
 }
 
 func Deserialize(data string) (*Submission, error) {

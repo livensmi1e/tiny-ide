@@ -1,6 +1,8 @@
 package queue
 
+import "github.com/livensmi1e/tiny-ide/pkg/domain"
+
 type Queue interface {
-	Push(submission *Submission) error
-	Pop() (*Submission, error)
+	Push(submission *domain.Submission) error
+	Pop() (*domain.Submission, error)
 }

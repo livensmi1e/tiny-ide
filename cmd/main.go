@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/livensmi1e/tiny-ide/infra"
+	"github.com/livensmi1e/tiny-ide/pkg/cee"
 	"github.com/livensmi1e/tiny-ide/pkg/config"
 	"github.com/livensmi1e/tiny-ide/pkg/logger"
 	"github.com/livensmi1e/tiny-ide/pkg/validator"
@@ -28,6 +31,13 @@ func main() {
 	}
 	validator := validator.New()
 	queue := queue.New(cfg, "submissions")
+
+	worker := cee.NewWorker(store, queue, *logger, 1*time.Second)
+	go func() {
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		worker.Run(ctx)
+	}()
 
 	infra := infra.NewInfrastructure(cfg, logger, store, validator, queue)
 	server := server.NewServer(infra)
