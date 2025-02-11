@@ -44,7 +44,7 @@ func (w *WebAPIV1) HandleSubmission(c echo.Context) *wrapper.Response {
 	})
 	return &wrapper.Response{
 		Code: http.StatusCreated,
-		Data: subDB.ID,
+		Data: dto.TokenResponse{Token: subDB.ID},
 	}
 }
 

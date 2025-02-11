@@ -14,3 +14,7 @@ type SubmissionResponse struct {
 	Time       string `json:"time"`
 	Memory     string `json:"memory"`
 }
+
+type TokenResponse struct {
+	Token string `json:"token"`
+}

@@ -90,7 +90,7 @@ func extractTimeAndMemory(stderr string) (string, string) {
 }
 
 func removeStderrStats(stderr string) string {
-	re := regexp.MustCompile(`(?s)(.*?)\n\tCommand being timed:`)
+	re := regexp.MustCompile(`(?s)(.*?)\n?\tCommand being timed:`)
 	match := re.FindStringSubmatch(stderr)
 	if len(match) > 1 {
 		return match[1]
