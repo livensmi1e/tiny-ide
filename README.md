@@ -12,3 +12,11 @@ Reference repositories
 -   [judge0/judge0](https://github.com/judge0/judge0)
 -   [judge0/ide](https://github.com/judge0/ide)
 -   [criyle/go-judge](https://github.com/criyle/go-judge)
+-   [seymuromarov/go-sandbox](https://github.com/seymuromarov/go-sandbox/)
+-   [Narasimha1997/gopg](https://github.com/Narasimha1997/gopg)
+
+Approaches
+
+-   [x] Use pure Docker container for sandbox
+-   [ ] Use gVisor: [gvisor.dev](https://gvisor.dev/)
+-   [ ] Use isolate
