@@ -25,25 +25,26 @@ func NewDockerContainer(i string, t time.Duration) *dockerContainer {
 	}
 }
 
-func (d *dockerContainer) BuildCommand(lang string) string {
+func (d *dockerContainer) BuildCommand(lang string, code string) string {
+	cmd := ""
 	switch lang {
 	case constant.PYTHON:
-		return "/usr/bin/time -v python3 -c"
+		cmd = "/usr/bin/time -v python3 -c" + " '" + code + "'"
 	case constant.C:
-		return "/usr/bin/time -v sh -c 'gcc -x c -o /tmp/result.out - && /tmp/result.out'"
+		cmd = fmt.Sprintf("/usr/bin/time -v sh -c 'echo \"%s\" > /tmp/main.c && gcc /tmp/main.c -o /tmp/result.out && /tmp/result.out'", code)
 	case constant.CPP:
-		return "/usr/bin/time -v sh -c 'g++ -x c++ -o /tmp/result.out - && /tmp/result.out'"
+		cmd = fmt.Sprintf("/usr/bin/time -v sh -c 'echo \"%s\" > /tmp/main.cpp && g++ /tmp/main.cpp -o /tmp/result.out && /tmp/result.out'", code)
 	default:
-		return ""
+		cmd = ""
 	}
+	return cmd
 }
 
 func (d *dockerContainer) Run(s *domain.Submission) (*domain.Metadata, error) {
-	execCmd := d.BuildCommand(s.MapLang())
+	execCmd := d.BuildCommand(s.MapLang(), s.SourceCode)
 	if execCmd == "" {
 		return &domain.Metadata{Stdout: "", Stderr: "", Time: constant.DefaultTime, Memory: constant.DefaultMemory}, fmt.Errorf("unsupported language: %s", s.MapLang())
 	}
-	execCmd += " " + "'" + s.SourceCode + "'"
 
 	ctx, cancel := context.WithTimeout(context.Background(), d.Timeout)
 	defer cancel()

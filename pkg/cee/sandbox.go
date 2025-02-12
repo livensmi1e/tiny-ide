@@ -6,6 +6,6 @@ import (
 
 type Sandbox interface {
 	Run(s *domain.Submission) (*domain.Metadata, error)
-	BuildCommand(language string) string
+	BuildCommand(language string, sourceCode string) string
 	Clean() error
 }
