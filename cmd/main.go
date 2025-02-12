@@ -32,12 +32,10 @@ func main() {
 	validator := validator.New()
 	queue := queue.New(cfg, "submissions")
 
-	worker := cee.NewWorker(store, queue, *logger, 1*time.Second)
-	go func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		worker.Run(ctx)
-	}()
+	workerPool := cee.NewWorkerPool(store, queue, *logger, 1*time.Second, 2)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go workerPool.Start(ctx)
 
 	infra := infra.NewInfrastructure(cfg, logger, store, validator, queue)
 	server := server.NewServer(infra)

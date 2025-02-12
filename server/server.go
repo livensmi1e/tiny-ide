@@ -25,6 +25,7 @@ func NewServer(infra infra.Infrastructure) *Server {
 }
 
 func (s *Server) Start() error {
+	s.infra.Logger().Info("server started")
 	return s.router.Start(s.infra.Config().Addr + ":" + s.infra.Config().Port)
 }
 

@@ -54,7 +54,7 @@ func (d *dockerContainer) Run(s *domain.Submission) (*domain.Metadata, error) {
 	runCmd.Stderr = &stderr
 
 	if err := runCmd.Run(); err != nil {
-		return &domain.Metadata{Stdout: "", Stderr: removeStderrStats(stderr.String()), Time: "", Memory: ""}, fmt.Errorf("run container failed %w", err)
+		return &domain.Metadata{Stdout: "", Stderr: removeStderrStats(stderr.String()), Time: constant.DefaultTime, Memory: constant.DefaultMemory}, fmt.Errorf("run container failed %w", err)
 	}
 
 	if ctx.Err() == context.DeadlineExceeded {
