@@ -9,18 +9,49 @@ fi
 
 EXT="${FILE##*.}"
 
+START_TIME=$(date +%s%N)
+TIME_OUTPUT=""
+MEMORY_OUTPUT=""
+STDOUT_OUTPUT=""
+STDERR_OUTPUT=""
+
 case "$EXT" in
     py)
-        python3 "$FILE"
+        python3 "$FILE" 2>/sandbox/code/main.stderr > /sandbox/code/main.stdout
+        STDOUT_OUTPUT=$(cat /sandbox/code/main.stdout)
+        STDERR_OUTPUT=$(cat /sandbox/code/main.stderr)
         ;;
     c)
-        gcc "${FILE}" -o /sandbox/code/main.out && /sandbox/code/main.out
+        gcc "$FILE" -o /sandbox/code/main.out 2>/sandbox/code/main.stderr
+        if [ $? -eq 0 ]; then
+            /sandbox/code/main.out > /sandbox/code/main.stdout 2>/sandbox/code/main.stderr
+            STDOUT_OUTPUT=$(cat /sandbox/code/main.stdout)
+            STDERR_OUTPUT=$(cat /sandbox/code/main.stderr)
+        else
+            STDERR_OUTPUT=$(cat /sandbox/code/main.stderr)
+        fi
         ;;
     cpp)
-        gcc "${FILE}" -o /sandbox/code/main.out && /sandbox/code/main.out
+        g++ "$FILE" -o /sandbox/code/main.out 2>/sandbox/code/main.err
+        if [ $? -eq 0 ]; then
+            /sandbox/code/main.out > /sandbox/code/main.stdout 2>/sandbox/code/main.err
+            STDOUT_OUTPUT=$(cat /sandbox/code/main.stdout)
+            STDERR_OUTPUT=$(cat /sandbox/code/main.err)
+        else
+            STDERR_OUTPUT=$(cat /sandbox/code/main.err)
+        fi
         ;;
     *)
-        echo "unsupported file type: $EXT"
-        exit 1
+        STDERR_OUTPUT="unsupported file type: $EXT"
         ;;
 esac
+
+END_TIME=$(date +%s%N)
+TIME_DIFF=$((($END_TIME - $START_TIME) / 1000000))
+
+MEMORY_USAGE=$(ps -o rss= -p $$)
+
+printf "stdout: %s\n" "$STDOUT_OUTPUT"
+printf "stderr: %s\n" "$STDERR_OUTPUT"
+printf "time: %d ms\n" "$TIME_DIFF"
+printf "memory: %s kb\n" "$MEMORY_USAGE"

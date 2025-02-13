@@ -12,5 +12,11 @@ clean:
 	docker stop redis && \
 	docker rm redis -v
 
+rmi:
+	@docker rmi sandbox
+
+build:
+	@docker build -t sandbox:latest .\pkg\cee\.
+
 dev: db redis
 	@echo "[Dev ready]"

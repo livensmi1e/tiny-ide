@@ -41,13 +41,13 @@ func (s *Submission) DecodeSource() string {
 }
 
 func (s *Submission) SaveSourceToFile(dirName string) error {
-	err := os.Mkdir(dirName, os.ModePerm)
+	err := os.MkdirAll(dirName, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("failed to create workspace: %v", err)
 	}
 	sourceCode := s.DecodeSource()
 	fileName := fmt.Sprintf("%s.%s", s.ID, s.MapLang())
-	filePath := filepath.Join(dirName, fileName)
+	filePath, _ := filepath.Abs(filepath.Join(dirName, fileName))
 	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %v", err)
@@ -60,6 +60,10 @@ func (s *Submission) SaveSourceToFile(dirName string) error {
 	s.FilePath = filePath
 	s.FileName = fileName
 	return nil
+}
+
+func (s *Submission) DeleteFile(dirName string) error {
+	return os.Remove(s.FilePath)
 }
 
 func Deserialize(data string) (*Submission, error) {

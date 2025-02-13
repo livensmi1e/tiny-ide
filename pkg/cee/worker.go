@@ -12,7 +12,6 @@ import (
 )
 
 type WorkerPool struct {
-	Sandbox    Sandbox
 	Queue      queue.Queue
 	Store      *store.Store
 	PollDelay  time.Duration
@@ -22,7 +21,6 @@ type WorkerPool struct {
 
 func NewWorkerPool(s *store.Store, q queue.Queue, l logger.Logger, pd time.Duration, n int) *WorkerPool {
 	return &WorkerPool{
-		Sandbox:    NewDockerContainer("sandbox", 24*time.Hour),
 		Queue:      q,
 		Store:      s,
 		Logger:     l,
@@ -38,12 +36,14 @@ func (w *WorkerPool) Start(ctx context.Context) {
 		go func(workerID int) {
 			defer wg.Done()
 			w.Logger.Info(fmt.Sprintf("worker %d started", workerID))
-			w.Run(ctx, workerID)
+			sandbox := NewDockerContainer("sandbox", 24*time.Hour)
+			w.Run(ctx, workerID, sandbox)
 		}(i)
 	}
+	wg.Wait()
 }
 
-func (w *WorkerPool) Run(ctx context.Context, workerID int) {
+func (w *WorkerPool) Run(ctx context.Context, workerID int, sandbox Sandbox) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -56,13 +56,12 @@ func (w *WorkerPool) Run(ctx context.Context, workerID int) {
 				continue
 			}
 
-			// TODO: Do the setup -> execute -> cleanup logic here
-			w.Sandbox.Setup(submission)
-			metadata := w.Sandbox.Execute(submission)
-			w.Sandbox.CleanUp(submission)
+			sandbox.Setup(submission)
+			metadata := sandbox.Execute(submission)
+			// sandbox.CleanUp(submission)
 
 			status := "success"
-			if w.Sandbox.Err() != nil {
+			if sandbox.Err() != nil {
 				status = "fail"
 			}
 			_, err = w.Store.UpdateSubmission(&store.UpdateSubmission{
