@@ -17,15 +17,19 @@ STDERR_OUTPUT=""
 
 case "$EXT" in
     py)
-        python3 "$FILE" 2>/sandbox/code/main.stderr > /sandbox/code/main.stdout
-        STDOUT_OUTPUT=$(cat /sandbox/code/main.stdout)
+        {
+            STDOUT_OUTPUT=$(python3 "$FILE"; printf '.'; exit "$?")
+        } 2>/sandbox/code/main.stderr
+        STDOUT_OUTPUT=${STDOUT_OUTPUT%.}
         STDERR_OUTPUT=$(cat /sandbox/code/main.stderr)
         ;;
     c)
         gcc "$FILE" -o /sandbox/code/main.out 2>/sandbox/code/main.stderr
         if [ $? -eq 0 ]; then
-            /sandbox/code/main.out > /sandbox/code/main.stdout 2>/sandbox/code/main.stderr
-            STDOUT_OUTPUT=$(cat /sandbox/code/main.stdout)
+            {
+                STDOUT_OUTPUT=$(/sandbox/code/main.out; printf '.'; exit "$?")
+            } 2>/sandbox/code/main.stderr
+            STDOUT_OUTPUT=${STDOUT_OUTPUT%.}
             STDERR_OUTPUT=$(cat /sandbox/code/main.stderr)
         else
             STDERR_OUTPUT=$(cat /sandbox/code/main.stderr)
@@ -34,8 +38,10 @@ case "$EXT" in
     cpp)
         g++ "$FILE" -o /sandbox/code/main.out 2>/sandbox/code/main.err
         if [ $? -eq 0 ]; then
-            /sandbox/code/main.out > /sandbox/code/main.stdout 2>/sandbox/code/main.err
-            STDOUT_OUTPUT=$(cat /sandbox/code/main.stdout)
+            {
+                STDOUT_OUTPUT=$(/sandbox/code/main.out; printf '.'; exit "$?")
+            } 2>/sandbox/code/main.err
+            STDOUT_OUTPUT=${STDOUT_OUTPUT%.}
             STDERR_OUTPUT=$(cat /sandbox/code/main.err)
         else
             STDERR_OUTPUT=$(cat /sandbox/code/main.err)
