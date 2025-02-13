@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /sandbox
-RUN useradd -m sandbox
-USER sandbox
 
-CMD ["/bin/sh"]
+COPY run.sh /sandbox/run.sh
+RUN chmod +x /sandbox/run.sh
+
+ENTRYPOINT ["/sandbox/run.sh"]
+CMD ["/sandbox/code"]

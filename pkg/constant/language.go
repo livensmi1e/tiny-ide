@@ -1,7 +1,7 @@
 package constant
 
 const (
-	PYTHON = "python"
+	PYTHON = "py"
 	C      = "c"
 	CPP    = "cpp"
 	GO     = "go"

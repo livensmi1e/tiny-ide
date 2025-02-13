@@ -52,23 +52,27 @@ func (w *WorkerPool) Run(ctx context.Context, workerID int) {
 		default:
 			submission, err := w.Queue.Pop()
 			if err != nil {
-				// w.Logger.Info(fmt.Sprintf("worker %d: queue empty, retrying", workerID))
 				time.Sleep(w.PollDelay)
 				continue
 			}
-			output, err := w.Sandbox.Run(submission)
+
+			// TODO: Do the setup -> execute -> cleanup logic here
+			w.Sandbox.Setup(submission)
+			metadata := w.Sandbox.Execute(submission)
+			w.Sandbox.CleanUp(submission)
+
 			status := "success"
-			if err != nil {
+			if w.Sandbox.Err() != nil {
 				status = "fail"
 			}
 			_, err = w.Store.UpdateSubmission(&store.UpdateSubmission{
 				ID:         submission.ID,
 				LanguageID: submission.LanguageID,
 				Status:     &status,
-				Stdout:     &output.Stdout,
-				Stderr:     &output.Stderr,
-				Time:       &output.Time,
-				Memory:     &output.Memory,
+				Stdout:     &metadata.Stdout,
+				Stderr:     &metadata.Stderr,
+				Time:       &metadata.Time,
+				Memory:     &metadata.Memory,
 			})
 			if err != nil {
 				w.Logger.Info(fmt.Sprintf("worker %d: failed to update submission", workerID))
