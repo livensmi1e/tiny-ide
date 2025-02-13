@@ -58,7 +58,7 @@ func (w *WorkerPool) Run(ctx context.Context, workerID int, sandbox Sandbox) {
 
 			sandbox.Setup(submission)
 			metadata := sandbox.Execute(submission)
-			// sandbox.CleanUp(submission)
+			sandbox.CleanUp(submission)
 
 			status := "success"
 			if sandbox.Err() != nil {

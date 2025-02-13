@@ -70,8 +70,8 @@ func (d *dockerContainer) Err() error {
 
 func (d *dockerContainer) parseMetadata(metadata string) *domain.Metadata {
 	parsedMetadata := &domain.DefaultMetadata
-	stdoutRegex := regexp.MustCompile(`(?s)stdout:\s*(.*)\s*\n`)
-	stderrRegex := regexp.MustCompile(`(?s)stderr:\s*(.*)\s*\n`)
+	stdoutRegex := regexp.MustCompile(`(?s)stdout:\s*(.*?)\nstderr`)
+	stderrRegex := regexp.MustCompile(`(?s)stderr:\s*(.*?)\ntime`)
 	timeRegex := regexp.MustCompile(`time:\s*(\d+)\s*ms`)
 	memoryRegex := regexp.MustCompile(`memory:\s*(\d+)\s*kb`)
 	if match := stdoutRegex.FindStringSubmatch(metadata); match != nil {
