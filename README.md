@@ -15,7 +15,7 @@ Reference repositories
 -   [seymuromarov/go-sandbox](https://github.com/seymuromarov/go-sandbox/)
 -   [Narasimha1997/gopg](https://github.com/Narasimha1997/gopg)
 
-Approaches
+Approaches & further development
 
 -   [x] Use pure Docker container for sandbox
 -   [ ] Use gVisor: [gvisor.dev](https://gvisor.dev/)
