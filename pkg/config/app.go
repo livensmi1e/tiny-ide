@@ -11,16 +11,16 @@ type Config struct {
 
 func New() *Config {
 	return &Config{
-		Addr:    "localhost",
+		Addr:    "0.0.0.0",
 		Port:    "8000",
 		Mode:    "development",
 		Version: "v1",
 		Store: StoreConfig{
 			Driver: "postgres",
-			DSN:    "postgres://postgres:password@localhost:5432/postgres?sslmode=disable",
+			DSN:    "postgres://postgres:password@postgres:5432/postgres?sslmode=disable",
 		},
 		Queue: QueueConfig{
-			Addr:     "localhost:6379",
+			Addr:     "redis:6379",
 			Password: "",
 		},
 	}
