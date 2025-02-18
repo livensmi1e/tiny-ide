@@ -39,9 +39,7 @@ func (d *dockerContainer) Execute(s *domain.Submission) *domain.Metadata {
 
 	runCmd := exec.CommandContext(ctx, "docker", "run",
 		"--rm",
-		"--privileged=true",
-		"-v", "/var/run/docker.sock:/var/run/docker.sock",
-		"-v", fmt.Sprintf("%s:/sandbox/code/%s", s.FilePath, s.FileName),
+		"-v", "D:\\dev\\tiny-ide\\workspace:/sandbox/code",
 		d.ImageName,
 		fmt.Sprintf("/sandbox/code/%s", s.FileName),
 	)
