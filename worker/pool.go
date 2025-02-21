@@ -1,4 +1,4 @@
-package cee
+package worker
 
 import (
 	"context"
@@ -6,9 +6,12 @@ import (
 	"sync"
 	"time"
 
+	pb "github.com/livensmi1e/tiny-ide/executor/proto"
 	"github.com/livensmi1e/tiny-ide/pkg/logger"
 	"github.com/livensmi1e/tiny-ide/queue"
 	"github.com/livensmi1e/tiny-ide/store"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type WorkerPool struct {
@@ -17,15 +20,22 @@ type WorkerPool struct {
 	PollDelay  time.Duration
 	Logger     logger.Logger
 	NumWorkers int
+	GrpcClient pb.ExecutorClient
 }
 
-func NewWorkerPool(s *store.Store, q queue.Queue, l logger.Logger, pd time.Duration, n int) *WorkerPool {
+func NewWorkerPool(s *store.Store, q queue.Queue, l logger.Logger, pd time.Duration, n int, addr string) *WorkerPool {
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		panic(fmt.Sprintf("failed to connect to executor service: %v", err))
+	}
+	client := pb.NewExecutorClient(conn)
 	return &WorkerPool{
 		Queue:      q,
 		Store:      s,
 		Logger:     l,
 		PollDelay:  pd,
 		NumWorkers: n,
+		GrpcClient: client,
 	}
 }
 
@@ -36,14 +46,13 @@ func (w *WorkerPool) Start(ctx context.Context) {
 		go func(workerID int) {
 			defer wg.Done()
 			w.Logger.Info(fmt.Sprintf("worker %d started", workerID))
-			sandbox := NewDockerContainer("sandbox", 24*time.Hour)
-			w.Run(ctx, workerID, sandbox)
+			w.Run(ctx, workerID)
 		}(i)
 	}
 	wg.Wait()
 }
 
-func (w *WorkerPool) Run(ctx context.Context, workerID int, sandbox Sandbox) {
+func (w *WorkerPool) Run(ctx context.Context, workerID int) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -55,23 +64,25 @@ func (w *WorkerPool) Run(ctx context.Context, workerID int, sandbox Sandbox) {
 				time.Sleep(w.PollDelay)
 				continue
 			}
-
-			sandbox.Setup(submission)
-			metadata := sandbox.Execute(submission)
-			sandbox.CleanUp(submission)
-
-			status := "success"
-			if sandbox.Err() != nil {
-				status = "fail"
+			req := &pb.ExecuteRequest{
+				SubmissionId: submission.ID,
+				LanguageId:   submission.LanguageID,
+				SourceCode:   submission.SourceCode,
+			}
+			resp, err := w.GrpcClient.Execute(ctx, req)
+			if err != nil {
+				w.Logger.Info(fmt.Sprintf("worker %d: failed to execute submission", workerID))
+				w.Logger.Error(err.Error())
+				continue
 			}
 			_, err = w.Store.UpdateSubmission(&store.UpdateSubmission{
 				ID:         submission.ID,
 				LanguageID: submission.LanguageID,
-				Status:     &status,
-				Stdout:     &metadata.Stdout,
-				Stderr:     &metadata.Stderr,
-				Time:       &metadata.Time,
-				Memory:     &metadata.Memory,
+				Status:     &resp.Status,
+				Stdout:     &resp.Stdout,
+				Stderr:     &resp.Stderr,
+				Time:       &resp.Time,
+				Memory:     &resp.Memory,
 			})
 			if err != nil {
 				w.Logger.Info(fmt.Sprintf("worker %d: failed to update submission", workerID))

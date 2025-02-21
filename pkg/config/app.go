@@ -1,14 +1,16 @@
 package config
 
 type Config struct {
-	Mode    string
-	Addr    string
-	Port    string
-	Version string
-	Store   StoreConfig
-	Queue   QueueConfig
+	Mode     string
+	Addr     string
+	Port     string
+	Version  string
+	Store    StoreConfig
+	Queue    QueueConfig
+	Executor Executor
 }
 
+// TODO: read from .env
 func New() *Config {
 	return &Config{
 		Addr:    "localhost",
@@ -22,6 +24,9 @@ func New() *Config {
 		Queue: QueueConfig{
 			Addr:     "localhost:6379",
 			Password: "",
+		},
+		Executor: Executor{
+			Addr: "dns:localhost:50001",
 		},
 	}
 }

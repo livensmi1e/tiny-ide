@@ -20,3 +20,9 @@ Approaches & further development
 -   [x] Use pure Docker container for sandbox
 -   [ ] Use gVisor: [gvisor.dev](https://gvisor.dev/)
 -   [ ] Use isolate
+
+Design
+
+-   Executor server is sandbox for executing code
+-   Workers communicate with executor servers via gRPC
+-   Use nginx as gRPC load balancer - a.k.a server side load balancer

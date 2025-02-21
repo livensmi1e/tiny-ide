@@ -1,4 +1,4 @@
-.PHONY: db redis dev clean
+.PHONY: db redis dev clean gen-proto
 
 db:	
 	@docker run --name postgres -d -p 5432:5432 -e POSTGRES_PASSWORD=password postgres:17.2-alpine3.21
@@ -20,3 +20,6 @@ build:
 
 dev: db redis
 	@echo "[Dev ready]"
+
+gen-proto:
+	@protoc -I. --go_out=. --go-grpc_out=. ./executor/proto/*.proto

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package executor;
+
+option go_package = "executor/proto;executor";
+
+message ExecuteRequest {
+    string submission_id = 1;
+    string source_code = 2;
+    int32 language_id = 3;
+}
+
+message ExecuteResponse {
+    string submission_id = 1;
+    string stdout = 2;
+    string stderr = 3;
+    string compile_output = 4;
+    string time = 5;
+    string memory = 6;
+    string status = 7;
+}
+
+service Executor {
+    rpc Execute(ExecuteRequest) returns (ExecuteResponse);
+}
+
