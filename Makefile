@@ -13,10 +13,13 @@ clean:
 	docker rm redis -v
 
 rmi:
-	@docker rmi sandbox
+	@docker rmi executor
 
 build:
-	@docker build -t sandbox:latest .\pkg\cee\.
+	@docker build -t executor:latest .\executor\.
+
+rpc:
+	@docker run --name executor -d -p 50001:50001 executor
 
 dev: db redis
 	@echo "[Dev ready]"
