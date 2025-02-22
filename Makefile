@@ -22,4 +22,4 @@ dev: db redis
 	@echo "[Dev ready]"
 
 gen-proto:
-	@protoc -I. --go_out=. --go-grpc_out=. ./executor/proto/*.proto
+	@protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./executor/proto/*.proto
