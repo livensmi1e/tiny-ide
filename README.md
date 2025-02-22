@@ -26,3 +26,7 @@ Design
 -   Executor server is sandbox for executing code
 -   Workers communicate with executor servers via gRPC
 -   Use nginx as gRPC load balancer - a.k.a server side load balancer
+
+Development
+
+-   Make `.env.development` file based on `.env.example`

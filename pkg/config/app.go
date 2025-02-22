@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -18,9 +18,9 @@ type Config struct {
 }
 
 func New() *Config {
-	err := godotenv.Load()
+	err := godotenv.Load(".env." + getEnv("MODE", "development"))
 	if err != nil {
-		log.Fatal("error loading .env file")
+		fmt.Println(err.Error())
 	}
 	return &Config{
 		Addr:    getEnv("SERVER_HOST", "localhost"),
@@ -71,5 +71,5 @@ func buildQueueAddr() string {
 func buildRPCAddr() string {
 	host := getEnv("RPC_SERVER_HOST", "localhost")
 	port := getEnv("RPC_SERVER_PORT", "50001")
-	return "dsn:" + host + ":" + port
+	return "dns:" + host + ":" + port
 }

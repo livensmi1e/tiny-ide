@@ -4,25 +4,29 @@ services:
         ports:
             - "80:80"
         depends_on:
-            - server
+            - api-server
         networks:
             - ide-net
 
-    server:
+    api-server:
         build: .
         ports:
-            - "8000:8000"
+            - "8000:8000" # Just for debugging deployment in dev, delete this on server
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_DB=${DB_NAME}
+            - MODE=production
         depends_on:
             postgres:
                 condition: service_healthy
             redis:
                 condition: service_started
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - ide-net
+
+    rpc-server:
+        build: ./executor/.
         networks:
             - ide-net
 
@@ -35,10 +39,8 @@ services:
             - POSTGRES_DB=${DB_NAME}
         healthcheck:
             test: ["CMD", "pg_isready", "-U", "postgres"]
-            interval: 10s
+            interval: 5s
             retries: 5
-        ports:
-            - "5432:5432"
         volumes:
             - pg-data:/var/lib/postgresql/data
         networks:
@@ -47,8 +49,6 @@ services:
     redis:
         image: redis:7.4.2-alpine
         restart: always
-        ports:
-            - "6379:6379"
         volumes:
             - redis-data:/data
         networks:
