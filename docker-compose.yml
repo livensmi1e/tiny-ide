@@ -25,8 +25,29 @@ services:
         networks:
             - ide-net
 
-    rpc-server:
+    rpc-server-1:
         build: ./executor/.
+        networks:
+            - ide-net
+
+    rpc-server-2:
+        build: ./executor/.
+        networks:
+            - ide-net
+
+    rpc-server-3:
+        build: ./executor/.
+        networks:
+            - ide-net
+
+    rpc-proxy:
+        image: nginx:1.27.4-alpine
+        volumes:
+            - ./balancer/nginx.conf:/etc/nginx/nginx.conf:ro
+        depends_on:
+            - rpc-server-1
+            - rpc-server-2
+            - rpc-server-3
         networks:
             - ide-net
 
