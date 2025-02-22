@@ -10,6 +10,7 @@ import (
 	"github.com/livensmi1e/tiny-ide/executor/server"
 )
 
+// TODO: using zerolog + read from envs + dockerize
 func main() {
 	lis, err := net.Listen("tcp", ":"+server.PORT)
 	if err != nil {

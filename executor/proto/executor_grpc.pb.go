@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.30.0--rc1
-// source: executor/proto/executor.proto
+// source: proto/executor.proto
 
-package executor
+package proto
 
 import (
 	context "context"
@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Executor_Execute_FullMethodName = "/executor.Executor/Execute"
+	Executor_Execute_FullMethodName = "/proto.Executor/Execute"
 )
 
 // ExecutorClient is the client API for Executor service.
@@ -108,7 +108,7 @@ func _Executor_Execute_Handler(srv interface{}, ctx context.Context, dec func(in
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Executor_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "executor.Executor",
+	ServiceName: "proto.Executor",
 	HandlerType: (*ExecutorServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -117,5 +117,5 @@ var Executor_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "executor/proto/executor.proto",
+	Metadata: "proto/executor.proto",
 }
