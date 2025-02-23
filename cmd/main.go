@@ -32,7 +32,7 @@ func main() {
 	validator := validator.New()
 	queue := queue.New(cfg, "submissions")
 
-	workerPool := worker.NewWorkerPool(store, queue, *logger, 1*time.Second, 2, cfg.Executor.Addr)
+	workerPool := worker.NewWorkerPool(store, queue, *logger, 1*time.Second, 5, cfg.Executor.Addr)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	go workerPool.Start(ctx)
